@@ -6,8 +6,14 @@ import com.google.auto.value.AutoValue;
 import com.google.gson.Gson;
 import com.google.gson.TypeAdapter;
 import com.google.gson.annotations.SerializedName;
+import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteColumn;
+import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteCreator;
+import com.pushtorefresh.storio.sqlite.annotations.StorIOSQLiteType;
 
-@AutoValue public abstract class DeviceSnapshot implements Parcelable {
+@AutoValue
+@StorIOSQLiteType(table = "device_snapshot")
+public abstract class DeviceSnapshot implements Parcelable {
+
   public static Builder builder() {
     return new AutoValue_DeviceSnapshot.Builder();
   }
@@ -16,20 +22,30 @@ import com.google.gson.annotations.SerializedName;
     return new AutoValue_DeviceSnapshot.GsonTypeAdapter(gson);
   }
 
+  @StorIOSQLiteCreator
   public static DeviceSnapshot create(String deviceId, double lat, double lng, long timestamp) {
     return new AutoValue_DeviceSnapshot(deviceId, lat, lng, timestamp);
   }
 
-  @Nullable @SerializedName("device_id") public abstract String deviceId();
+  @StorIOSQLiteColumn(name = "device_id")
+  @Nullable
+  @SerializedName("device_id")
+  public abstract String deviceId();
 
-  @SerializedName("latitude") public abstract double lat();
+  @StorIOSQLiteColumn(name = "latitude")
+  @SerializedName("latitude")
+  public abstract double lat();
 
-  @SerializedName("longitude") public abstract double lng();
+  @StorIOSQLiteColumn(name = "longitude")
+  @SerializedName("longitude")
+  public abstract double lng();
 
-  @SerializedName("timestamp") public abstract long timestamp();
+  @StorIOSQLiteColumn(name = "timestamp", key = true)
+  @SerializedName("timestamp")
+  public abstract long timestamp();
 
-
-  @AutoValue.Builder public abstract static class Builder {
+  @AutoValue.Builder
+  public abstract static class Builder {
 
     public abstract Builder setLat(double lat);
 

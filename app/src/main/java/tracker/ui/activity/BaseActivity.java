@@ -1,11 +1,9 @@
 package tracker.ui.activity;
 
 import android.Manifest;
-import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.widget.Toast;
 import com.tbruyelle.rxpermissions.RxPermissions;
-import rx.functions.Action1;
 import tracker.TrackerApplication;
 import tracker.injection.component.ActivityComponent;
 import tracker.injection.component.ApplicationComponent;
@@ -13,6 +11,8 @@ import tracker.injection.component.DaggerActivityComponent;
 import tracker.injection.module.ActivityModule;
 
 public abstract class BaseActivity extends AppCompatActivity {
+
+  private ActivityComponent mActivityComponent;
 
   @Override
   protected void onStart() {
@@ -29,8 +29,6 @@ public abstract class BaseActivity extends AppCompatActivity {
           }
         });
   }
-
-  private ActivityComponent mActivityComponent;
 
   public ActivityComponent activityComponent() {
     if (mActivityComponent == null) {

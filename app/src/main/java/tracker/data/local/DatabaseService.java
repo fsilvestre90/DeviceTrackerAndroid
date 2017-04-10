@@ -1,75 +1,67 @@
 package tracker.data.local;
 
-import static nl.qbusict.cupboard.CupboardFactory.cupboard;
-
 import android.content.Context;
-import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteOpenHelper;
 import android.location.Location;
 import android.provider.Settings.Secure;
 import android.util.Log;
+import com.pushtorefresh.storio.sqlite.StorIOSQLite;
+import com.pushtorefresh.storio.sqlite.queries.DeleteQuery;
+import com.pushtorefresh.storio.sqlite.queries.Query;
 import com.squareup.otto.Bus;
 import com.squareup.otto.Subscribe;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import javax.inject.Inject;
-import nl.qbusict.cupboard.QueryResultIterable;
 import tracker.data.model.DeviceSnapshot;
 import tracker.injection.ApplicationContext;
 
-public class DatabaseService extends SQLiteOpenHelper {
+public class DatabaseService {
 
-  private static final String DATABASE_NAME = "device_location.db";
-  private static final int DATABASE_VERSION = 1;
   private static String DEVICE_ID;
 
   private final Bus mBus;
-
-  static {
-    // register our models
-    cupboard().register(DeviceSnapshot.class);
-  }
-
+  private final StorIOSQLite mStoreSqlLite;
 
   @Inject
-  public DatabaseService(@ApplicationContext Context context, Bus bus) {
-    super(context, DATABASE_NAME, null, DATABASE_VERSION);
+  public DatabaseService(@ApplicationContext Context context, StorIOSQLite storIOSQLite, Bus bus) {
     mBus = bus;
+    mStoreSqlLite = storIOSQLite;
     bus.register(this);
     DEVICE_ID = Secure.getString(context.getContentResolver(), Secure.ANDROID_ID);
   }
 
-  @Override
-  public void onCreate(SQLiteDatabase db) {
-    // this will ensure that all tables are created
-    cupboard().withDatabase(db).createTables();
-  }
-
-  @Override
-  public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-    // this will upgrade tables, adding columns and new tables.
-    cupboard().withDatabase(db).upgradeTables();
-  }
-
   @Subscribe
   public void saveLocationUpdate(Location location) {
-    Log.d("DatabaseService", String.format("Saving location to db...", location.getLatitude(), location.getLongitude()));
-    cupboard().withDatabase(getWritableDatabase()).put(DeviceSnapshot.create(DEVICE_ID, location.getLatitude(), location.getLongitude(),
-        Calendar.getInstance().getTimeInMillis()));
+    Log.d("DatabaseService",
+        String.format("Saving location to db...", location.getLatitude(), location.getLongitude()));
+    mStoreSqlLite
+        .put()
+        .object(DeviceSnapshot.create(DEVICE_ID, location.getLatitude(), location.getLongitude(),
+            System.currentTimeMillis()))
+        .prepare()
+        .executeAsBlocking();
   }
 
   public List<DeviceSnapshot> getDeviceSnapshot() {
-    final QueryResultIterable<DeviceSnapshot> iter = cupboard().withDatabase(getReadableDatabase())
-        .query(DeviceSnapshot.class).query();
-    final List<DeviceSnapshot> deviceHistory = new ArrayList<>();
-    for (DeviceSnapshot snapshot : iter) {
-      deviceHistory.add(snapshot);
-    }
-    iter.close();
-    // since we are uploading device information over a given time, clear the past snapshots
-    cupboard().withDatabase(getWritableDatabase()).delete(DeviceSnapshot.class);
-    return deviceHistory;
+    return mStoreSqlLite
+        .get()
+        .listOfObjects(DeviceSnapshot.class)
+        .withQuery(Query.builder()
+            .table("device_snapshot")
+            .build())
+        .prepare()
+        .executeAsBlocking();
+  }
+
+  public void clearDb() {
+    mStoreSqlLite
+        .delete()
+        .byQuery(DeleteQuery.builder()
+            .table("device_snapshot")
+            .where("timestamp <= ?")
+            .whereArgs(System.currentTimeMillis() - 86400)
+            .build())
+        .prepare()
+        .executeAsBlocking();
   }
 
 }
