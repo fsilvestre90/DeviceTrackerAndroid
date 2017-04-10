@@ -8,7 +8,7 @@ import tracker.data.model.DevicePayload;
 
 public interface RemoteService {
 
-  @POST("location/")
+  @POST("/location")
   Call<ResponseBody> sendDeviceData(@Body DevicePayload payload);
 
 }

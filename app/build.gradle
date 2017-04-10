@@ -19,7 +19,7 @@ android {
 
     buildTypes {
         debug {
-            buildConfigField("String", "ENDPOINT_URL", "\"${Android}\"")
+            buildConfigField("String", "ENDPOINT_URL", "\"${mobile}\"")
             shrinkResources false
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
@@ -72,8 +72,8 @@ def getGooglePlayServicesApiKey() {
 
 dependencies {
     final SUPPORT_LIBRARY_VERSION = '23.1.1'
-    final RETROFIT_VERSION = '2.0.0-beta3'
-    final OKHTTP_VERSION = '3.0.0'
+    final RETROFIT_VERSION = '2.2.0'
+    final OKHTTP_VERSION = '3.6.0'
     final DAGGER_VERSION = '2.0.1'
     final HAMCREST_VERSION = '1.3'
     final MOCKITO_VERSION = '1.10.19'

@@ -1,9 +1,9 @@
 package tracker.data;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import okhttp3.ResponseBody;
+import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
 import rx.Observable;
@@ -12,7 +12,6 @@ import timber.log.Timber;
 import tracker.data.local.DatabaseService;
 import tracker.data.location.LocationService;
 import tracker.data.model.DevicePayload;
-import tracker.data.model.DeviceSnapshot;
 import tracker.data.remote.RemoteService;
 
 /**
@@ -39,12 +38,13 @@ public class ServicesManager {
           DevicePayload data = new DevicePayload(mDatabaseService.getDeviceSnapshot());
           mRemoteService.sendDeviceData(data).enqueue(new Callback<ResponseBody>() {
             @Override
-            public void onResponse(Response<ResponseBody> response) {
+            public void onResponse(Call<ResponseBody> call, Response<ResponseBody> response) {
               Timber.d("Success");
+              mDatabaseService.clearDb();
             }
 
             @Override
-            public void onFailure(Throwable t) {
+            public void onFailure(Call<ResponseBody> call, Throwable t) {
               Timber.d("Failed");
             }
           });
