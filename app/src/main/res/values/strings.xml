@@ -11,4 +11,8 @@
   <string name="dialog_error_title">Oops</string>
   <string name="dialog_general_error_Message">There was an error making the request</string>
   <string name="dialog_error_no_connection">Sorry, you need a connection to do that!</string>
+
+  <string name="PERIODIC_TASK_HEARTBEAT">com.tracker.PERIODIC_TASK_HEART_BEAT</string>
+  <string name="BACKGROUND_SERVICE_BATTERY_CONTROL">BATTERY_SERVICE</string>
+
 </resources>

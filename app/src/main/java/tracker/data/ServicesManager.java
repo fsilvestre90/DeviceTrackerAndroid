@@ -1,5 +1,6 @@
 package tracker.data;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import javax.inject.Inject;
 import okhttp3.ResponseBody;
@@ -12,6 +13,7 @@ import timber.log.Timber;
 import tracker.data.local.DatabaseService;
 import tracker.data.location.LocationService;
 import tracker.data.model.DevicePayload;
+import tracker.data.model.DeviceSnapshot;
 import tracker.data.remote.RemoteService;
 
 /**
@@ -48,7 +50,6 @@ public class ServicesManager {
               Timber.d("Failed");
             }
           });
-
           return Observable.empty();
         })
         .doOnError(err -> Timber.d("Error sending to API")).subscribe();
@@ -56,5 +57,9 @@ public class ServicesManager {
 
   public void startDeviceTracking() {
     mLocationService.startLocationTracking();
+  }
+
+  public List<DeviceSnapshot> get() {
+    return mDatabaseService.getDeviceSnapshot();
   }
 }

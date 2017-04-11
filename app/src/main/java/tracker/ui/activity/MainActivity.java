@@ -2,6 +2,7 @@ package tracker.ui.activity;
 
 import android.os.Bundle;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 import javax.inject.Inject;
 import tracker.R;
 import tracker.data.ServicesManager;
@@ -17,12 +18,6 @@ public class MainActivity extends BaseActivity {
     activityComponent().inject(this);
     setContentView(R.layout.activity_main);
     ButterKnife.bind(this);
-  }
-
-  @Override
-  protected void onLocationPermissionGranted() {
-    servicesManager.startDeviceTracking();
-    servicesManager.startApiPoller();
   }
 
 }

@@ -22,7 +22,7 @@ public abstract class BaseActivity extends AppCompatActivity {
         .request(Manifest.permission.ACCESS_FINE_LOCATION)
         .subscribe(granted -> {
           if (granted) {
-            onLocationPermissionGranted();
+
           } else {
             Toast.makeText(BaseActivity.this, "We need permissions for this to work",
                 Toast.LENGTH_SHORT).show();
@@ -43,7 +43,5 @@ public abstract class BaseActivity extends AppCompatActivity {
   protected ApplicationComponent applicationComponent() {
     return TrackerApplication.get(this).getComponent();
   }
-
-  protected abstract void onLocationPermissionGranted();
 
 }

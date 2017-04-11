@@ -5,11 +5,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.NonNull;
 
-/**
- * Created by filipesilvestre on 4/10/17.
- */
-
-
 public class DbOpenHelper extends SQLiteOpenHelper {
 
   public DbOpenHelper(@NonNull Context context) {
